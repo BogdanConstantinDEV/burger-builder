@@ -68,10 +68,20 @@ const BurgerBuilder = () => {
         setShowOrder(false)
     }
 
+    // continue with order
+    const continueOrder = () => {
+        alert('You have chosen well son!!😉')
+        hideOrder()
+    }
+
     return (
         <Aux>
             <Modal trigger={showOrder} closeBack={hideOrder}>
-                <OrderInfo ingredients={stateIngredients} />
+                <OrderInfo
+                    ingredients={stateIngredients}
+                    cancelPurcashe={hideOrder}
+                    continuePurcashe={continueOrder}
+                />
             </Modal>
             <Burger ingredients={stateIngredients} />
             <BurgerControls
