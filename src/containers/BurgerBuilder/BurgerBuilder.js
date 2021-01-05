@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import Aux from '../../hoc/Auxiliary'
 import Burger from '../../components/Burger/Burger'
 import BurgerControls from '../../components/Burger/BurgerControls/BuildControls'
+import Modal from '../../components/UI/Modal/Modal'
+import OrderInfo from '../../components/Burger/OrderInfo/OrderInfo'
 
 const BurgerBuilder = () => {
 
@@ -13,6 +15,9 @@ const BurgerBuilder = () => {
         bacon: .7
     }
 
+
+    // <<<<<    STATE   >>>>> ==>>
+
     const [stateIngredients, setStateIngredients] = useState({
         cheese: 0,
         salad: 0,
@@ -22,6 +27,12 @@ const BurgerBuilder = () => {
 
     const [price, setPrice] = useState(4)
 
+    const [showOrder, setShowOrder] = useState(false)
+
+    // <<<<<       >>>>> <<==
+
+
+    // add ingredient to burger
     const addIngredient = type => {
         const newIng = { ...stateIngredients }
         newIng[type] = newIng[type] += 1
@@ -29,6 +40,8 @@ const BurgerBuilder = () => {
 
         setPrice(price + INGREDIENT_PRICES[type])
     }
+
+    // remove ingredient from burger
     const remIngredient = type => {
         if (stateIngredients[type] === 0) return
 
@@ -39,19 +52,34 @@ const BurgerBuilder = () => {
         setPrice(price - INGREDIENT_PRICES[type])
     }
 
+    // disable less button if ingredient < 0
     const disabledIng = { ...stateIngredients }
     for (let key in disabledIng) {
         disabledIng[key] = disabledIng[key] <= 0
     }
 
+    // make order visible
+    const viewOrder = () => {
+        setShowOrder(true)
+    }
+
+    // hide order
+    const hideOrder = () => {
+        setShowOrder(false)
+    }
+
     return (
         <Aux>
+            <Modal trigger={showOrder} closeBack={hideOrder}>
+                <OrderInfo ingredients={stateIngredients} />
+            </Modal>
             <Burger ingredients={stateIngredients} />
             <BurgerControls
                 addItem={addIngredient}
                 remItem={remIngredient}
                 price={price}
                 disabledInfo={disabledIng}
+                viewOrder={viewOrder}
             />
         </Aux>
     )

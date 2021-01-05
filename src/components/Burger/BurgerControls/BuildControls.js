@@ -14,7 +14,6 @@ const BuildControls = props => {
 
     const controls =
         <div>
-            <p>Current price: <strong>${props.price.toFixed(2)}</strong></p>
             {
                 types.map(el => (
                     <BuildControl
@@ -29,7 +28,12 @@ const BuildControls = props => {
 
     return (
         <div className={classes.BuildControls}>
+            <p>Current price: <strong>${props.price.toFixed(2)}</strong></p>
             {controls}
+            <button
+                className={classes.OrderButton}
+                onClick={props.viewOrder}
+            >OrderButton</button>
         </div>
     )
 }
