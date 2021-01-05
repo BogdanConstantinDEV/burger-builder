@@ -15,6 +15,7 @@ const OrderInfo = props => {
             <ul>
                 {listIng}
             </ul>
+            <p><strong>Total price: {props.price.toFixed(2)}</strong></p>
             <p>Continue to checkout?</p>
             <Button btnType='Danger' click={props.cancelPurcashe}>Cancel</Button>
             <Button btnType='Success' click={props.continuePurcashe}>Continue</Button>

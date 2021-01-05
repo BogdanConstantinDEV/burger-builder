@@ -81,6 +81,7 @@ const BurgerBuilder = () => {
                     ingredients={stateIngredients}
                     cancelPurcashe={hideOrder}
                     continuePurcashe={continueOrder}
+                    price={price}
                 />
             </Modal>
             <Burger ingredients={stateIngredients} />
