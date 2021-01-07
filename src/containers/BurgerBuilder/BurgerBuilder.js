@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import Aux from '../../hoc/Auxiliary'
+import Aux from '../../hoc/Auxiliary/Auxiliary'
 import Burger from '../../components/Burger/Burger'
 import BurgerControls from '../../components/Burger/BurgerControls/BuildControls'
 import Modal from '../../components/UI/Modal/Modal'
