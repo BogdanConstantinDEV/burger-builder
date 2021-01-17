@@ -9,7 +9,7 @@ const SideDrawer = props => {
     const drawerClasses = [classes.SideDrawer, props.stateDrawer ? classes.Open : classes.Closed]
 
     return <Aux>
-        {props.stateDrawer ? <Backdrop click={props.closeDrawer} /> : null}
+        {props.stateDrawer ? <Backdrop click={props.closeDrawer} onlyMobile /> : null}
 
         <nav className={drawerClasses.join(' ')}>
             <div style={{ height: '70px' }}><Logo /></div>

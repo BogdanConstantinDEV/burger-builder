@@ -39,5 +39,6 @@
     .NavItem a.active {
         border-bottom: 4px solid #4084c8;
         background-color: #8f5c2c;
+        color: #fff;
     }  
 }
