@@ -8,8 +8,8 @@ const NavItems = props => {
     props.hideDynamic ? itemsClasses.push(classes.OnlyMobile) : itemsClasses.push(null)
 
     return <ul className={itemsClasses.join(' ')}>
-        <NavItem link='/' active>Burger Builder</NavItem>
-        <NavItem link='/'>Checkout</NavItem>
+        <NavItem link='/'>Burger Builder</NavItem>
+        <NavItem link='/orders'>Orders</NavItem>
     </ul>
 }
 

@@ -3,7 +3,7 @@ import Aux from '../Auxiliary/Auxiliary'
 import Modal from '../../components/UI/Modal/Modal'
 
 const withErrorHandler = (WrappedComponent, axios) => {
-    return () => {
+    return (props) => {
         const [error, setError] = useState(null)
 
         useEffect(() => {
@@ -27,7 +27,7 @@ const withErrorHandler = (WrappedComponent, axios) => {
                 closeBack={() => setError(false)}>
                 {error ? error.message : null}
             </Modal>
-            <WrappedComponent />
+            <WrappedComponent {...props} />
         </Aux>
     }
 }

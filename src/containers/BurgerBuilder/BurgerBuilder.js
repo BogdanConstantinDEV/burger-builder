@@ -10,7 +10,7 @@ import Modal from '../../components/UI/Modal/Modal'
 import OrderInfo from '../../components/Burger/OrderInfo/OrderInfo'
 import Spinner from '../../components/UI/Spinner/Spinner'
 
-const BurgerBuilder = () => {
+const BurgerBuilder = props => {
 
     const INGREDIENT_PRICES = {
         salad: .5,
@@ -24,6 +24,7 @@ const BurgerBuilder = () => {
 
     const [ingredients, setIngredients] = useState(null)
     const [price, setPrice] = useState(4)
+
     const [showOrder, setShowOrder] = useState(false)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(false)
@@ -33,9 +34,18 @@ const BurgerBuilder = () => {
 
     // render content by ingredients from db
     useEffect(() => {
-        axios.get('/ingredients')
-            .then(res => setIngredients(res.data))
-            .catch(err => setError(err))
+        setLoading(true)
+        axios.get('/ingredients.json')
+            .then(res => {
+                setIngredients(res.data)
+                setLoading(false)
+            })
+            .catch(err => {
+                setError(err)
+                setLoading(false)
+            })
+
+
     }, [])
 
 
@@ -47,7 +57,6 @@ const BurgerBuilder = () => {
 
         setPrice(price + INGREDIENT_PRICES[type])
     }
-
     // remove ingredient from burger
     const remIngredient = type => {
         if (ingredients[type] === 0) return
@@ -59,52 +68,41 @@ const BurgerBuilder = () => {
         setPrice(price - INGREDIENT_PRICES[type])
     }
 
+
+
     // disable less button if ingredient < 0
     const disabledIng = { ...ingredients }
     for (let key in disabledIng) {
         disabledIng[key] = disabledIng[key] <= 0
     }
-
     // make order visible
     const viewOrder = () => {
         setShowOrder(true)
     }
-
     // hide order
     const hideOrder = () => {
         setShowOrder(false)
     }
 
-
-
-    // continue purcashe
+    // CONTINUE PURCASHE  ======>>
     const continuePurcashe = () => {
-        setLoading(true)
-        const orderData = {
-            ingredients: ingredients,
-            price,
-            customer: {
-                name: 'Bivolu',
-                adress: {
-                    street: 'Bivolu Street',
-                    number: 69,
-                    zipcode: 123456,
-                    country: 'Fairyland',
-                }
-            },
-            email: 'balls.deep@yeah.nope',
-            deliveryMethod: 'fast as fuck'
-        }
+        const ingArr = Object.entries(ingredients)
+        ingArr.push(['price', price])
+        const ing = ingArr.map(el => {
+            return `${encodeURIComponent(el[0])}=${encodeURIComponent(el[1])}`
+        })
 
-        axios.post('/orders.json', orderData)
-            .then(() => setLoading(false))
-            .catch(() => setLoading(false))
+        props.history.push({
+            pathname: '/checkout',
+            search: '?' + ing.join('&')
+        })
         hideOrder()
     }
+    // ===========<<
 
 
     // render content after recive res from db
-    let orderInfo = null
+    let orderInfo = <Spinner />
     let burger = error ? 'This error is big as fuck' : <Spinner />
     if (ingredients) {
         orderInfo = <OrderInfo
