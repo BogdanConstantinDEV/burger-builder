@@ -24,7 +24,6 @@ const Orders = () => {
     const orders = []
     if (data) {
         const ordersArr = Object.values(data)
-        // console.log(ordersArr[0])
         ordersArr.forEach(el => {
             const ingArr = Object.entries(el.ingredients)
             const ingStr = ingArr.map(el => { return el.join(': ') }).join(' | ')

@@ -87,7 +87,7 @@ const BurgerBuilder = props => {
     // CONTINUE PURCASHE  ======>>
     const continuePurcashe = () => {
         const ingArr = Object.entries(ingredients)
-        ingArr.push(['price', price])
+        ingArr.push(['price', Number.parseFloat(price).toFixed(2)])
         const ing = ingArr.map(el => {
             return `${encodeURIComponent(el[0])}=${encodeURIComponent(el[1])}`
         })
