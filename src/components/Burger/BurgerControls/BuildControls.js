@@ -5,9 +5,9 @@ import classes from './BuildControls.module.css'
 
 const types = [
     { label: 'Salad', type: 'salad' },
-    { label: 'Meat', type: 'meat' },
+    { label: 'Cheese', type: 'cheese' },
     { label: 'Bacon', type: 'bacon' },
-    { label: 'Cheese', type: 'cheese' }
+    { label: 'Meat', type: 'meat' }
 ]
 
 const BuildControls = props => {
@@ -26,6 +26,7 @@ const BuildControls = props => {
             }
         </div>
 
+
     return (
         <div className={classes.BuildControls}>
             <p>Current price: <strong>${props.price.toFixed(2)}</strong></p>
@@ -33,7 +34,8 @@ const BuildControls = props => {
             <button
                 className={classes.OrderButton}
                 onClick={props.viewOrder}
-            >OrderButton</button>
+                disabled={props.orderBtn_Disabled}>
+                OrderButton</button>
         </div>
     )
 }

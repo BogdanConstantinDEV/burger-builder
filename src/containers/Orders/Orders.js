@@ -27,7 +27,7 @@ const Orders = () => {
         ordersArr.forEach(el => {
             const ingArr = Object.entries(el.ingredients)
             const ingStr = ingArr.map(el => { return el.join(': ') }).join(' | ')
-            orders.push(<Order ingredients={ingStr} price={el.price} key={Math.random()} />)
+            orders.push(<Order ingredients={ingStr} price={el.price} contactData={el.contactData} key={Math.random()} />)
         })
 
     }

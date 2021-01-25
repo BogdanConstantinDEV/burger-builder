@@ -1,42 +1,25 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Route } from 'react-router-dom'
+import { connect } from 'react-redux'
 
 import CheckoutSummary from '../../components/Orders/CheckoutSummary/CheckoutSummary'
 import ContactData from './ContactData/ContactData'
 
 const Checkout = props => {
-    const [ingredients, setIngredients] = useState({
-        salad: 0,
-        cheese: 0,
-        meat: 0,
-        bacon: 0
-    })
-    const [price, setPrice] = useState(0)
-
-
-    useEffect(() => {
-        const query = new URLSearchParams(props.location.search)
-        const ing = {}
-        for (let el of query) {
-            if (el[0] === 'price') {
-                setPrice(el[1])
-            } else {
-                ing[el[0]] = el[1] * 1
-            }
-        }
-        setIngredients(ing)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
 
     return <React.Fragment>
-        <CheckoutSummary ingredients={ingredients} price={price} />
+        <CheckoutSummary ingredients={props.ings} price={props.prc} />
         <Route
             path={props.match.path + '/contact-data'}
-            render={props => <ContactData
-                {...props}
-                ingredients={ingredients}
-                price={price} />} />
+            component={ContactData} />
     </React.Fragment>
 }
 
-export default Checkout
+const mapStateToProps = state => {
+    return {
+        ings: state.ingredients,
+        prc: state.totalPrice.toFixed(2)
+    }
+}
+
+export default connect(mapStateToProps)(Checkout)

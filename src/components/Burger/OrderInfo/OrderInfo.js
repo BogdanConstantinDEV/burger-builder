@@ -6,7 +6,7 @@ const OrderInfo = props => {
     const listIng = Object.keys(props.ingredients)
         .map(el => el)
         .filter(el => props.ingredients[el] > 0)
-        .map(igKey => <li key={igKey}><span style={{ textTransform: 'capitalize' }}>{igKey}</span>:: {props.ingredients[igKey]}</li>)
+        .map(igKey => <li key={igKey}><span style={{ textTransform: 'capitalize' }}>{igKey}</span>: {props.ingredients[igKey]}</li>)
 
     return (
         <Aux>

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
-
 import axios from '../../axios-orders'
 import Aux from '../../hoc/Auxiliary/Auxiliary'
-import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
+import { connect } from 'react-redux'
 
+import * as actionType from '../../store/actions'
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
 import Burger from '../../components/Burger/Burger'
 import BurgerControls from '../../components/Burger/BurgerControls/BuildControls'
 import Modal from '../../components/UI/Modal/Modal'
@@ -12,18 +13,9 @@ import Spinner from '../../components/UI/Spinner/Spinner'
 
 const BurgerBuilder = props => {
 
-    const INGREDIENT_PRICES = {
-        salad: .5,
-        cheese: .4,
-        meat: 1.3,
-        bacon: .7
-    }
 
 
     // <<<<<    STATE   >>>>> ==>>
-
-    const [ingredients, setIngredients] = useState(null)
-    const [price, setPrice] = useState(4)
 
     const [showOrder, setShowOrder] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -37,87 +29,63 @@ const BurgerBuilder = props => {
         setLoading(true)
         axios.get('/ingredients.json')
             .then(res => {
-                setIngredients(res.data)
+                props.onSetInitialIngredients(res.data)
                 setLoading(false)
             })
             .catch(err => {
                 setError(err)
                 setLoading(false)
             })
-
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
 
-    // add ingredient to burger
-    const addIngredient = type => {
-        const newIng = { ...ingredients }
-        newIng[type] = newIng[type] += 1
-        setIngredients(newIng)
 
-        setPrice(price + INGREDIENT_PRICES[type])
+    // disable order button if no ingredient added
+    const disableOrderButton = () => {
+        const ingsNum = []
+        for (let key in props.ings) {
+            ingsNum.push(props.ings[key])
+        }
+        const sum = ingsNum.reduce((acc, curr) => acc + curr, 0)
+        return sum <= 0
     }
-    // remove ingredient from burger
-    const remIngredient = type => {
-        if (ingredients[type] === 0) return
-
-        const newIng = { ...ingredients }
-        newIng[type] = newIng[type] -= 1
-        setIngredients(newIng)
-
-        setPrice(price - INGREDIENT_PRICES[type])
-    }
-
 
 
     // disable less button if ingredient < 0
-    const disabledIng = { ...ingredients }
+    const disabledIng = { ...props.ings }
     for (let key in disabledIng) {
         disabledIng[key] = disabledIng[key] <= 0
     }
+
     // make order visible
-    const viewOrder = () => {
-        setShowOrder(true)
-    }
+    const viewOrder = () => setShowOrder(true)
+
     // hide order
-    const hideOrder = () => {
-        setShowOrder(false)
-    }
+    const hideOrder = () => setShowOrder(false)
 
     // CONTINUE PURCASHE  ======>>
-    const continuePurcashe = () => {
-        const ingArr = Object.entries(ingredients)
-        ingArr.push(['price', Number.parseFloat(price).toFixed(2)])
-        const ing = ingArr.map(el => {
-            return `${encodeURIComponent(el[0])}=${encodeURIComponent(el[1])}`
-        })
-
-        props.history.push({
-            pathname: '/checkout',
-            search: '?' + ing.join('&')
-        })
-        hideOrder()
-    }
-    // ===========<<
+    const continuePurcashe = () => props.history.push('/checkout')
 
 
     // render content after recive res from db
     let orderInfo = <Spinner />
     let burger = error ? 'This error is big as fuck' : <Spinner />
-    if (ingredients) {
+    if (props.ings) {
         orderInfo = <OrderInfo
-            ingredients={ingredients}
+            ingredients={props.ings}
             cancelPurcashe={hideOrder}
             continuePurcashe={continuePurcashe}
-            price={price} />
+            price={props.prc} />
         burger =
             <Aux>
-                <Burger ingredients={ingredients} />
+                <Burger ingredients={props.ings} />
                 <BurgerControls
-                    addItem={addIngredient}
-                    remItem={remIngredient}
-                    price={price}
+                    addItem={props.onAddIngredient}
+                    remItem={props.onRemoveIngredient}
+                    price={props.prc}
                     disabledInfo={disabledIng}
+                    orderBtn_Disabled={disableOrderButton()}
                     viewOrder={viewOrder} />
             </Aux>
     }
@@ -132,4 +100,22 @@ const BurgerBuilder = props => {
     )
 }
 
-export default withErrorHandler(BurgerBuilder, axios) 
+
+
+// REDUX maps ====== -->
+
+const mapStateToProps = state => {
+    return {
+        ings: state.ingredients,
+        prc: state.totalPrice
+    }
+}
+const mapDispatchToProps = dispatch => {
+    return {
+        onSetInitialIngredients: dataIngs => dispatch({ type: actionType.SET_INITIAL_INGREDIENTS, dataIngs }),
+        onAddIngredient: ingType => dispatch({ type: actionType.ADD_INGREDIENT, ingType }),
+        onRemoveIngredient: ingType => dispatch({ type: actionType.REMOVE_INGREDIENT, ingType })
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(BurgerBuilder, axios)) 

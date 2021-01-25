@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
+import axios from '../../../axios-orders'
+import { connect } from 'react-redux'
+
 import classes from './ContactData.module.css'
 import Button from '../../../components/UI/Button/Button'
 import Input from '../../../components/UI/Input/Input'
-import axios from '../../../axios-orders'
 
 const ContactData = props => {
 
@@ -90,8 +92,11 @@ const ContactData = props => {
     const [formIsValid, setFormIsValid] = useState(false)
 
 
+    // check input fields validity
     const checkValidity = (value, rules) => {
+
         let isValid = true
+
         if (rules.required) {
             isValid = value.trim() !== '' && isValid
         }
@@ -101,10 +106,20 @@ const ContactData = props => {
         if (rules.maxLength) {
             isValid = value.length <= rules.maxLength && isValid
         }
+        if (rules.isEmail) {
+            const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+            isValid = pattern.test(value) && isValid
+        }
+        if (rules.isNumeric) {
+            const pattern = /^\d+$/;
+            isValid = pattern.test(value) && isValid
+        }
+
         return isValid
     }
 
 
+    // update inputs on Change
     const onChangeHandler = (e, key) => {
         const newOrderForm = { ...orderForm }
         const newFormElem = { ...newOrderForm[key] }
@@ -122,6 +137,7 @@ const ContactData = props => {
         setFormIsValid(isValid)
     }
 
+    // send data to DB
     const placeOrder = e => {
         e.preventDefault()
         const contactData = {}
@@ -131,8 +147,8 @@ const ContactData = props => {
 
         const orderData = {
             contactData,
-            ingredients: props.ingredients,
-            price: props.price,
+            ingredients: props.ings,
+            price: props.prc,
         }
         axios.post('/orders.json', orderData)
             .then(() => props.history.push('/'))
@@ -171,4 +187,11 @@ const ContactData = props => {
     </div>
 }
 
-export default ContactData
+const mapStateToProps = state => {
+    return {
+        ings: state.ingredients,
+        prc: state.totalPrice.toFixed(2)
+    }
+}
+
+export default connect(mapStateToProps)(ContactData)
